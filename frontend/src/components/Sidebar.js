@@ -39,6 +39,21 @@ const navItems = [
   { path: '/risk-assessments', label: 'Risk Assessment', icon: AlertOctagon, ai: true },
   { path: '/talking-points', label: 'Talking Points', icon: Mic, ai: true },
   { path: '/post-crisis-analysis', label: 'Post-Crisis Analysis', icon: TrendingUp, ai: true },
+  { path: '/ai-advanced', label: 'AI Advanced', icon: Zap, ai: true },
+,
+  // // === Batch 02 Gaps & Frontend Mounts ===
+  { path: '/cf/predictive-crisis-detection', icon: '+', label: 'CF: PredictiveCrisisDetectio' },
+  { path: '/cf/agentic-response-planning', icon: '+', label: 'CF: AgenticResponsePlanning' },
+  { path: '/cf/sentiment-driven-escalation', icon: '+', label: 'CF: SentimentDrivenEscalatio' },
+  { path: '/cf/scenario-stress-testing', icon: '+', label: 'CF: ScenarioStressTesting' },
+  { path: '/cf/post-crisis-learning-automation', icon: '+', label: 'CF: PostCrisisLearningAutoma' },
+  { path: '/gap/all-major-functions-lack-ai-endpoints-missing-generate-respo', icon: '+', label: 'Gap: AllMajorFunctionsLackAiE' },
+  { path: '/gap/no-real-time-alert-system-for-crisis-detection', icon: '+', label: 'Gap: NoRealTimeAlertSystemFor' },
+  { path: '/gap/limited-integration-with-media-monitoring-apis-meltwater-bra', icon: '+', label: 'Gap: LimitedIntegrationWithMe' },
+  { path: '/gap/no-webhooks', icon: '+', label: 'Gap: NoWebhooks' },
+  { path: '/gap/limited-push-notification-distribution-beyond-plumbing-stubs', icon: '+', label: 'Gap: LimitedPushNotificationD' },
+  { path: '/gap/no-approval-workflow-for-crisis-responses', icon: '+', label: 'Gap: NoApprovalWorkflowForCri' },
+  { path: '/gap/no-payment-billing-module', icon: '+', label: 'Gap: NoPaymentBillingModule' }
 ];
 
 export default function Sidebar({ onLogout }) {

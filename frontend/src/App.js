@@ -4,6 +4,21 @@ import Sidebar from './components/Sidebar';
 import LoginPage from './pages/LoginPage';
 import Dashboard from './pages/Dashboard';
 import FeaturePage from './pages/FeaturePage';
+import AIAdvanced from './pages/AIAdvanced';
+// // === Batch 02 Gaps & Frontend Mounts ===
+import CfPredictiveCrisisDetection from './pages/CfPredictiveCrisisDetection';
+import CfAgenticResponsePlanning from './pages/CfAgenticResponsePlanning';
+import CfSentimentDrivenEscalation from './pages/CfSentimentDrivenEscalation';
+import CfScenarioStressTesting from './pages/CfScenarioStressTesting';
+import CfPostCrisisLearningAutomation from './pages/CfPostCrisisLearningAutomation';
+import GapAllMajorFunctionsLackAiEndpointsMissingGenerateRespo from './pages/GapAllMajorFunctionsLackAiEndpointsMissingGenerateRespo';
+import GapNoRealTimeAlertSystemForCrisisDetection from './pages/GapNoRealTimeAlertSystemForCrisisDetection';
+import GapLimitedIntegrationWithMediaMonitoringApisMeltwaterBra from './pages/GapLimitedIntegrationWithMediaMonitoringApisMeltwaterBra';
+import GapNoWebhooks from './pages/GapNoWebhooks';
+import GapLimitedPushNotificationDistributionBeyondPlumbingStubs from './pages/GapLimitedPushNotificationDistributionBeyondPlumbingStubs';
+import GapNoApprovalWorkflowForCrisisResponses from './pages/GapNoApprovalWorkflowForCrisisResponses';
+import GapNoPaymentBillingModule from './pages/GapNoPaymentBillingModule';
+
 import {
   crisisIncidentsConfig,
   mediaMonitoringConfig,
@@ -65,8 +80,23 @@ export default function App() {
             <Route path="/risk-assessments" element={<FeaturePage config={riskAssessmentsConfig} />} />
             <Route path="/talking-points" element={<FeaturePage config={talkingPointsConfig} />} />
             <Route path="/post-crisis-analysis" element={<FeaturePage config={postCrisisAnalysisConfig} />} />
+            <Route path="/ai-advanced" element={<AIAdvanced />} />
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+          
+        {/* // === Batch 02 Gaps & Frontend Mounts === */}
+        <Route path="/cf/predictive-crisis-detection" element={<CfPredictiveCrisisDetection />} />
+        <Route path="/cf/agentic-response-planning" element={<CfAgenticResponsePlanning />} />
+        <Route path="/cf/sentiment-driven-escalation" element={<CfSentimentDrivenEscalation />} />
+        <Route path="/cf/scenario-stress-testing" element={<CfScenarioStressTesting />} />
+        <Route path="/cf/post-crisis-learning-automation" element={<CfPostCrisisLearningAutomation />} />
+        <Route path="/gap/all-major-functions-lack-ai-endpoints-missing-generate-respo" element={<GapAllMajorFunctionsLackAiEndpointsMissingGenerateRespo />} />
+        <Route path="/gap/no-real-time-alert-system-for-crisis-detection" element={<GapNoRealTimeAlertSystemForCrisisDetection />} />
+        <Route path="/gap/limited-integration-with-media-monitoring-apis-meltwater-bra" element={<GapLimitedIntegrationWithMediaMonitoringApisMeltwaterBra />} />
+        <Route path="/gap/no-webhooks" element={<GapNoWebhooks />} />
+        <Route path="/gap/limited-push-notification-distribution-beyond-plumbing-stubs" element={<GapLimitedPushNotificationDistributionBeyondPlumbingStubs />} />
+        <Route path="/gap/no-approval-workflow-for-crisis-responses" element={<GapNoApprovalWorkflowForCrisisResponses />} />
+        <Route path="/gap/no-payment-billing-module" element={<GapNoPaymentBillingModule />} />
+      </Routes>
         </main>
       </div>
     </Router>

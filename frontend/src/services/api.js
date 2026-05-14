@@ -136,4 +136,21 @@ export const updatePostCrisisAnalysis = (id, data) => api.put(`/post-crisis-anal
 export const deletePostCrisisAnalysis = (id) => api.delete(`/post-crisis-analysis/${id}`);
 export const generatePostCrisisAnalysis = (data) => api.post('/post-crisis-analysis/generate', data);
 
+// ---- AI Advanced ----
+export const getSentimentTrend  = (params) => api.get('/ai-advanced/sentiment-trend', { params });
+export const ingestSentiment     = (data)  => api.post('/ai-advanced/sentiment-trend/ingest', data);
+export const mediaAlert          = (data)  => api.post('/ai-advanced/media-alert', data);
+export const notificationCascade = (data)  => api.post('/ai-advanced/notification-cascade', data);
+export const listNotificationCascades = () => api.get('/ai-advanced/notification-cascade');
+export const severityScore       = (data)  => api.post('/ai-advanced/severity-score', data);
+export const consistencyCheck    = (data)  => api.post('/ai-advanced/consistency-check', data);
+export const templateRecommender = (data)  => api.post('/ai-advanced/template-recommender', data);
+export const impactForecast      = (data)  => api.post('/ai-advanced/impact-forecast', data);
+export const competitorMentions  = (data)  => api.post('/ai-advanced/competitor-mentions', data);
+export const draftPressRelease   = (data)  => api.post('/ai-advanced/draft-press-release', data);
+export const predictEscalation   = (data)  => api.post('/ai-advanced/predict-escalation', data);
+export const autoGenerateTalkingPoints = (data) => api.post('/ai-advanced/auto-generate-talking-points', data);
+export const recommendTactics    = (data)  => api.post('/ai-advanced/recommend-tactics', data);
+export const getAIResults        = (params) => api.get('/ai-advanced/results', { params });
+
 export default api;

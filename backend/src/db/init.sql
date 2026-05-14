@@ -189,3 +189,60 @@ CREATE TABLE IF NOT EXISTS post_crisis_analyses (
     status VARCHAR(20) CHECK (status IN ('draft', 'final')) DEFAULT 'draft',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- ── New tables added for production improvements ───────────────────────────
+
+-- Stakeholder groups for bulk communication
+CREATE TABLE IF NOT EXISTS stakeholder_groups (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    type VARCHAR(50) CHECK (type IN ('employees','investors','customers','regulators','media','partners','other')) NOT NULL,
+    contact_list JSONB DEFAULT '[]',
+    communication_preferences JSONB DEFAULT '{}',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Add incident_id to media_monitoring for coverage timeline
+ALTER TABLE media_monitoring ADD COLUMN IF NOT EXISTS incident_id INTEGER REFERENCES crisis_incidents(id) ON DELETE SET NULL;
+
+-- AI Results audit trail (JSONB for full payload)
+CREATE TABLE IF NOT EXISTS ai_results (
+    id SERIAL PRIMARY KEY,
+    endpoint VARCHAR(100) NOT NULL,
+    entity_type VARCHAR(50),
+    entity_id INTEGER,
+    user_id INTEGER,
+    model VARCHAR(100),
+    result JSONB,
+    usage_tokens INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_ai_results_endpoint ON ai_results(endpoint);
+CREATE INDEX IF NOT EXISTS idx_ai_results_entity ON ai_results(entity_type, entity_id);
+
+-- Sentiment trend timeseries (rolled up for dashboard)
+CREATE TABLE IF NOT EXISTS sentiment_trend (
+    id SERIAL PRIMARY KEY,
+    incident_id INTEGER REFERENCES crisis_incidents(id) ON DELETE CASCADE,
+    bucket_at TIMESTAMP NOT NULL,
+    avg_sentiment NUMERIC(4,3),
+    volume INTEGER DEFAULT 0,
+    source VARCHAR(50),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS idx_sentiment_trend_inc ON sentiment_trend(incident_id, bucket_at);
+
+-- Notification cascades (sent batches)
+CREATE TABLE IF NOT EXISTS notification_cascades (
+    id SERIAL PRIMARY KEY,
+    incident_id INTEGER REFERENCES crisis_incidents(id) ON DELETE CASCADE,
+    triggered_by INTEGER,
+    tier_payload JSONB,
+    sent_count INTEGER DEFAULT 0,
+    failed_count INTEGER DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Stakeholder priority field (if not present already)
+ALTER TABLE stakeholders ADD COLUMN IF NOT EXISTS priority VARCHAR(20) DEFAULT 'secondary';

@@ -179,7 +179,9 @@ export default function FeaturePage({ config }) {
     setLoading(true);
     try {
       const res = await config.apiGetAll();
-      setItems(Array.isArray(res.data) ? res.data : []);
+      // Backend may return either an array or { data: [], total, page, limit }
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+      setItems(list);
     } catch (err) {
       console.error('Fetch error:', err);
       addToast('Failed to load data', 'error');

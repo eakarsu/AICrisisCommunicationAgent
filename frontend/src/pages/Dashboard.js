@@ -40,11 +40,19 @@ export default function Dashboard() {
           getStakeholders(),
         ]);
 
-        const incidents = incidentsRes.status === 'fulfilled' ? incidentsRes.value.data : [];
-        const team = teamRes.status === 'fulfilled' ? teamRes.value.data : [];
-        const stakeholders = stakeholdersRes.status === 'fulfilled' ? stakeholdersRes.value.data : [];
+        // API may return either an array or { data: [], total, page, limit }
+        const unwrap = (resp) => {
+          const d = resp.status === 'fulfilled' ? resp.value.data : null;
+          if (!d) return [];
+          if (Array.isArray(d)) return d;
+          if (Array.isArray(d.data)) return d.data;
+          return [];
+        };
+        const incidents = unwrap(incidentsRes);
+        const team = unwrap(teamRes);
+        const stakeholders = unwrap(stakeholdersRes);
 
-        const dataArr = Array.isArray(incidents) ? incidents : [];
+        const dataArr = incidents;
         const activeCount = dataArr.filter(
           (i) => i.status === 'active' || i.status === 'monitoring'
         ).length;
@@ -52,8 +60,8 @@ export default function Dashboard() {
         setStats({
           incidents: dataArr.length,
           activeIncidents: activeCount,
-          teamMembers: Array.isArray(team) ? team.length : 0,
-          stakeholders: Array.isArray(stakeholders) ? stakeholders.length : 0,
+          teamMembers: team.length,
+          stakeholders: stakeholders.length,
         });
 
         setRecentIncidents(dataArr.slice(0, 5));
