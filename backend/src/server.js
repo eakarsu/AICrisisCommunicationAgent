@@ -87,6 +87,14 @@ app.use('/api/gap-no-approval-workflow-for-crisis-responses', require('./routes/
 // // === Batch 02 Gaps & Frontend Mounts ===
 app.use('/api/gap-no-payment-billing-module', require('./routes/gap_no_payment_billing_module'));
 
+// // === Custom Crisis Views (mount BEFORE 404) ===
+app.use('/api/custom-views', require('./routes/customViews'));
+
+// 404 handler — must come AFTER all routes
+app.use((req, res) => {
+  res.status(404).json({ error: 'Not found', path: req.originalUrl });
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

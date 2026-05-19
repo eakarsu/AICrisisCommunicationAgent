@@ -18,6 +18,7 @@ import {
   TrendingUp,
   LogOut,
   Zap,
+  LayoutGrid,
 } from 'lucide-react';
 
 const navItems = [
@@ -53,7 +54,9 @@ const navItems = [
   { path: '/gap/no-webhooks', icon: '+', label: 'Gap: NoWebhooks' },
   { path: '/gap/limited-push-notification-distribution-beyond-plumbing-stubs', icon: '+', label: 'Gap: LimitedPushNotificationD' },
   { path: '/gap/no-approval-workflow-for-crisis-responses', icon: '+', label: 'Gap: NoApprovalWorkflowForCri' },
-  { path: '/gap/no-payment-billing-module', icon: '+', label: 'Gap: NoPaymentBillingModule' }
+  { path: '/gap/no-payment-billing-module', icon: '+', label: 'Gap: NoPaymentBillingModule' },
+  { section: 'Custom Views' },
+  { path: '/custom-views', label: 'Crisis Views', icon: LayoutGrid }
 ];
 
 export default function Sidebar({ onLogout }) {

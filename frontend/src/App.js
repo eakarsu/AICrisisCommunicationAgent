@@ -18,6 +18,7 @@ import GapNoWebhooks from './pages/GapNoWebhooks';
 import GapLimitedPushNotificationDistributionBeyondPlumbingStubs from './pages/GapLimitedPushNotificationDistributionBeyondPlumbingStubs';
 import GapNoApprovalWorkflowForCrisisResponses from './pages/GapNoApprovalWorkflowForCrisisResponses';
 import GapNoPaymentBillingModule from './pages/GapNoPaymentBillingModule';
+import CustomViewsPage from './pages/CustomViewsPage';
 
 import {
   crisisIncidentsConfig,
@@ -96,6 +97,7 @@ export default function App() {
         <Route path="/gap/limited-push-notification-distribution-beyond-plumbing-stubs" element={<GapLimitedPushNotificationDistributionBeyondPlumbingStubs />} />
         <Route path="/gap/no-approval-workflow-for-crisis-responses" element={<GapNoApprovalWorkflowForCrisisResponses />} />
         <Route path="/gap/no-payment-billing-module" element={<GapNoPaymentBillingModule />} />
+        <Route path="/custom-views" element={<CustomViewsPage />} />
       </Routes>
         </main>
       </div>
