@@ -20,6 +20,11 @@ import GapNoApprovalWorkflowForCrisisResponses from './pages/GapNoApprovalWorkfl
 import GapNoPaymentBillingModule from './pages/GapNoPaymentBillingModule';
 import CustomViewsPage from './pages/CustomViewsPage';
 
+import CodexCustomVizFeature from './pages/CodexCustomVizFeature';
+import CodexOperationsFeature from './pages/CodexOperationsFeature';
+
+import TimelineView from './pages/TimelineView';
+
 import {
   crisisIncidentsConfig,
   mediaMonitoringConfig,
@@ -66,6 +71,10 @@ export default function App() {
         <Sidebar onLogout={handleLogout} />
         <main className="main-content">
           <Routes>
+        <Route path="/insights/timeline" element={<TimelineView />} />
+        <Route path="/codex/custom-viz" element={<CodexCustomVizFeature />} />
+        <Route path="/codex/operations" element={<CodexOperationsFeature />} />
+
             <Route path="/" element={<Dashboard />} />
             <Route path="/crisis-incidents" element={<FeaturePage config={crisisIncidentsConfig} />} />
             <Route path="/media-monitoring" element={<FeaturePage config={mediaMonitoringConfig} />} />
