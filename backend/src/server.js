@@ -1,4 +1,5 @@
 require('dotenv').config({ path: require('path').join(__dirname, '../../.env') });
+require('./config/runtime').validateRuntime();
 
 const express = require('express');
 const cors = require('cors');
@@ -65,27 +66,6 @@ app.use('/api/post-crisis-analysis', require('./routes/postCrisisAnalysis'));
 app.use('/api/export', require('./routes/exportRoutes'));
 
 const PORT = process.env.PORT || 3001;
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-all-major-functions-lack-ai-endpoints-missing-generate-respo', require('./routes/gap_all_major_functions_lack_ai_endpoints_missing_generate_respo'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-real-time-alert-system-for-crisis-detection', require('./routes/gap_no_real_time_alert_system_for_crisis_detection'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-limited-integration-with-media-monitoring-apis-meltwater-bra', require('./routes/gap_limited_integration_with_media_monitoring_apis_meltwater_bra'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-webhooks', require('./routes/gap_no_webhooks'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-limited-push-notification-distribution-beyond-plumbing-stubs', require('./routes/gap_limited_push_notification_distribution_beyond_plumbing_stubs'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-approval-workflow-for-crisis-responses', require('./routes/gap_no_approval_workflow_for_crisis_responses'));
-
-// // === Batch 02 Gaps & Frontend Mounts ===
-app.use('/api/gap-no-payment-billing-module', require('./routes/gap_no_payment_billing_module'));
 
 // // === Custom Crisis Views (mount BEFORE 404) ===
 app.use('/api/custom-views', require('./routes/customViews'));
