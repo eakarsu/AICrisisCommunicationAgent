@@ -28,8 +28,8 @@ export default function LoginPage({ onLogin }) {
   };
 
   const handleAutoFill = () => {
-    setEmail('admin@crisiscomm.ai');
-    setPassword('password123');
+    setEmail(process.env.REACT_APP_DEMO_EMAIL || '');
+    setPassword(process.env.REACT_APP_DEMO_PASSWORD || '');
     setError('');
   };
 
