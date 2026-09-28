@@ -87,7 +87,7 @@ export default function LoginPage({ onLogin }) {
               onClick={handleAutoFill}
             >
               <Wand2 size={14} />
-              Auto-Fill Demo Credentials
+              Auto Fill Demo Credentials
             </button>
           </div>
         </form>

@@ -96,7 +96,11 @@ export default function Sidebar({ onLogout }) {
               to={item.path}
               className={`sidebar-item ${isActive ? 'active' : ''}`}
             >
-              <Icon className="sidebar-item-icon" size={18} />
+              {typeof Icon === 'string' ? (
+                <span className="sidebar-item-icon" aria-hidden="true">{Icon}</span>
+              ) : (
+                <Icon className="sidebar-item-icon" size={18} />
+              )}
               <span>{item.label}</span>
               {item.ai && <span className="sidebar-ai-badge">AI</span>}
             </Link>
