@@ -1,6 +1,8 @@
+import FormattedAIReport from "../components/FormattedAIReport";
 import React, { useState, useEffect } from 'react';
 import {
   getCrisisIncidents,
+  getStakeholders,
   mediaAlert,
   notificationCascade,
   severityScore,
@@ -47,6 +49,7 @@ const callMap = {
 export default function AIAdvanced() {
   const [tool, setTool] = useState(TOOLS[0]);
   const [incidents, setIncidents] = useState([]);
+  const [stakeholders, setStakeholders] = useState([]);
   const [form, setForm] = useState({});
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -59,6 +62,7 @@ export default function AIAdvanced() {
         const r = await getCrisisIncidents();
         setIncidents(r.data?.data || r.data || []);
       } catch {}
+      try { const r = await getStakeholders(); setStakeholders(r.data?.data || r.data || []); } catch {}
       reloadHistory();
       reloadTrend();
     })();
@@ -75,6 +79,23 @@ export default function AIAdvanced() {
       const r = await getSentimentTrend({ hours: 24 });
       setTrend(r.data);
     } catch {}
+  };
+
+  const fillSample = (index) => {
+    const examples = [
+      { mention_text: 'Local reporters ask for a verified update on a regional service outage; restoration time remains unknown.', message_template: 'We are investigating a service interruption. We will share the next verified update after incident command review.', competitor_names: 'Rival service provider, regional operator', audience: 'customers', audiences: 'customers,employees,media' },
+      { mention_text: 'A consumer forum discusses a possible product defect; the affected batch has not yet been confirmed.', message_template: 'We have paused distribution while our quality team verifies the affected products and next steps.', competitor_names: 'Competing manufacturer, local retailer', audience: 'media', audiences: 'media,customers,regulators' },
+      { mention_text: 'Customers post questions about unusual portal access; security is still verifying affected accounts.', message_template: 'Our security team contained unusual activity and is checking the facts before issuing customer guidance.', competitor_names: 'Alternative platform, industry provider', audience: 'employees', audiences: 'employees,customers,investors' },
+    ];
+    const example = examples[index];
+    const chosenIncident = incidents.find((item) => String(item.id) === String(form.incident_id)) || incidents[0];
+    const selectedStakeholderIds = String(form.stakeholder_ids || '').split(',').map((id) => id.trim()).filter(Boolean);
+    const validStakeholderIds = selectedStakeholderIds.length && selectedStakeholderIds.every((id) => stakeholders.some((item) => String(item.id) === id));
+    const chosenStakeholders = validStakeholderIds ? selectedStakeholderIds.join(',') : stakeholders[0] ? String(stakeholders[0].id) : '';
+    setForm({ ...form, ...Object.fromEntries(tool.fields.filter((field) => field !== 'incident_id' && field !== 'stakeholder_ids').map((field) => [field, example[field]])),
+      ...(chosenIncident ? { incident_id: String(chosenIncident.id) } : {}),
+      ...(tool.fields.includes('stakeholder_ids') && chosenStakeholders ? { stakeholder_ids: chosenStakeholders } : {}) });
+    setResult(null);
   };
 
   const submit = async () => {
@@ -170,6 +191,9 @@ export default function AIAdvanced() {
 
       <div style={{ background: '#fff', padding: 24, borderRadius: 8, border: '1px solid #e5e7eb', marginBottom: 24 }}>
         <h3>{tool.label}</h3>
+        <div className="ai-preset-bar"><div><strong>Fill example</strong><p>Review all fields before running AI.</p></div><div className="ai-actions">{['Service outage', 'Product recall', 'Data incident'].map((label, index) => <button type="button" className="btn btn-secondary" key={label} onClick={() => fillSample(index)}>{label}</button>)}</div></div>
+        {tool.fields.includes('incident_id') && !incidents.length && <p role="status">Select an existing incident before running AI. No incident records are available.</p>}
+        {tool.fields.includes('stakeholder_ids') && !stakeholders.length && <p role="status">Stakeholder IDs require existing stakeholder records; none are available. Leave this optional field empty.</p>}
         {tool.fields.map((f) => (
           <div key={f} style={{ marginBottom: 12 }}>
             <label style={{ display: 'block', marginBottom: 4, fontSize: 13, fontWeight: 600 }}>{f}</label>
@@ -178,7 +202,7 @@ export default function AIAdvanced() {
         ))}
         <button
           onClick={submit}
-          disabled={loading}
+          disabled={loading || (tool.fields.includes('incident_id') && !form.incident_id)}
           style={{ padding: '10px 20px', background: '#3b82f6', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer' }}
         >
           {loading ? 'Running…' : 'Run AI'}
@@ -188,9 +212,7 @@ export default function AIAdvanced() {
       {result && (
         <div style={{ background: '#fff', padding: 24, borderRadius: 8, border: '1px solid #e5e7eb', marginBottom: 24 }}>
           <h3>Result</h3>
-          <pre style={{ overflow: 'auto', background: '#0f172a', color: '#e2e8f0', padding: 16, borderRadius: 6, fontSize: 12 }}>
-            {JSON.stringify(result, null, 2)}
-          </pre>
+          <FormattedAIReport response={result} />
         </div>
       )}
 
@@ -217,6 +239,7 @@ export default function AIAdvanced() {
               ))}
             </tbody>
           </table>
+          {history.map((h) => <details key={h.id} style={{ marginTop: 12 }}><summary>{h.endpoint} · {new Date(h.created_at).toLocaleString()}</summary><FormattedAIReport response={h.result} title={h.endpoint} model={h.model} /></details>)}
         </div>
       )}
     </div>

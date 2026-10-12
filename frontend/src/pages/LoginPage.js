@@ -27,9 +27,15 @@ export default function LoginPage({ onLogin }) {
     }
   };
 
+  const demoEmail = process.env.REACT_APP_ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'true' ? process.env.REACT_APP_DEMO_EMAIL : '';
+  const demoPassword = process.env.REACT_APP_ENABLE_DEMO_CREDENTIAL_AUTOFILL === 'true' ? process.env.REACT_APP_DEMO_PASSWORD : '';
   const handleAutoFill = () => {
-    setEmail(process.env.REACT_APP_DEMO_EMAIL || '');
-    setPassword(process.env.REACT_APP_DEMO_PASSWORD || '');
+    if (!demoEmail || !demoPassword) {
+      setError('Demo credentials are not configured for this session.');
+      return;
+    }
+    setEmail(demoEmail);
+    setPassword(demoPassword);
     setError('');
   };
 
@@ -87,7 +93,7 @@ export default function LoginPage({ onLogin }) {
               onClick={handleAutoFill}
             >
               <Wand2 size={14} />
-              Auto Fill Demo Credentials
+              Fill demo credentials
             </button>
           </div>
         </form>

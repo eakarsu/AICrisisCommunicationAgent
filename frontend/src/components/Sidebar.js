@@ -1,3 +1,4 @@
+import AIReportLibrary from "./AIReportLibrary";
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -123,6 +124,6 @@ export default function Sidebar({ onLogout }) {
           <span>Sign Out</span>
         </button>
       </div>
-    </aside>
+    <AIReportLibrary /></aside>
   );
 }

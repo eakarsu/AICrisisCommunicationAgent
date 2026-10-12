@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import AIReport from '../components/AIReport';
+import FullFieldPresets from '../components/FullFieldPresets';
+import { nativeAIPresets } from '../components/nativeAIPresets';
 import {
   ArrowLeft, Plus, Edit3, Trash2, X, Sparkles, Loader2, AlertTriangle, CheckCircle,
 } from 'lucide-react';
@@ -23,117 +26,7 @@ function formatCellValue(val, col) {
 }
 
 function AIOutputDisplay({ content }) {
-  if (!content) return null;
-  const text = typeof content === 'object' ? JSON.stringify(content, null, 2) : String(content);
-
-  // Parse markdown-like content into sections
-  const sections = [];
-  const lines = text.split('\n');
-  let currentSection = { title: '', content: [] };
-
-  lines.forEach((line) => {
-    const trimmed = line.trim();
-    if (trimmed.startsWith('## ') || trimmed.startsWith('### ')) {
-      if (currentSection.title || currentSection.content.length > 0) {
-        sections.push({ ...currentSection });
-      }
-      currentSection = { title: trimmed.replace(/^#+\s*/, ''), content: [] };
-    } else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
-      if (currentSection.title || currentSection.content.length > 0) {
-        sections.push({ ...currentSection });
-      }
-      currentSection = { title: trimmed.replace(/\*\*/g, ''), content: [] };
-    } else if (trimmed.startsWith('# ')) {
-      if (currentSection.title || currentSection.content.length > 0) {
-        sections.push({ ...currentSection });
-      }
-      currentSection = { title: trimmed.replace(/^#\s*/, ''), content: [] };
-    } else {
-      currentSection.content.push(line);
-    }
-  });
-  if (currentSection.title || currentSection.content.length > 0) {
-    sections.push(currentSection);
-  }
-
-  if (sections.length <= 1 && !sections[0]?.title) {
-    return (
-      <div className="ai-output">
-        <div className="ai-output-inner">
-          <div className="ai-output-header">
-            <span className="ai-output-badge"><Sparkles size={12} /> AI Generated</span>
-            <span className="ai-output-title">Analysis Result</span>
-          </div>
-          <div className="ai-output-section">
-            {text.split('\n').map((line, i) => {
-              const t = line.trim();
-              if (!t) return <br key={i} />;
-              if (t.startsWith('- ') || t.startsWith('• ') || t.startsWith('* ')) {
-                return <ul key={i}><li>{renderInline(t.replace(/^[-•*]\s*/, ''))}</li></ul>;
-              }
-              if (/^\d+[\.\)]\s/.test(t)) {
-                return <ul key={i}><li>{renderInline(t.replace(/^\d+[\.\)]\s*/, ''))}</li></ul>;
-              }
-              if (t.startsWith('>')) {
-                return <blockquote key={i}>{renderInline(t.replace(/^>\s*/, ''))}</blockquote>;
-              }
-              return <p key={i}>{renderInline(t)}</p>;
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="ai-output">
-      <div className="ai-output-inner">
-        <div className="ai-output-header">
-          <span className="ai-output-badge"><Sparkles size={12} /> AI Generated</span>
-          <span className="ai-output-title">Analysis Result</span>
-        </div>
-        {sections.map((section, si) => (
-          <div key={si} className="ai-output-section">
-            {section.title && <h3>{section.title}</h3>}
-            {section.content.map((line, li) => {
-              const t = line.trim();
-              if (!t) return <br key={li} />;
-              if (t.startsWith('- ') || t.startsWith('• ') || t.startsWith('* ')) {
-                return <ul key={li}><li>{renderInline(t.replace(/^[-•*]\s*/, ''))}</li></ul>;
-              }
-              if (/^\d+[\.\)]\s/.test(t)) {
-                return <ul key={li}><li>{renderInline(t.replace(/^\d+[\.\)]\s*/, ''))}</li></ul>;
-              }
-              if (t.startsWith('>')) {
-                return <blockquote key={li}>{renderInline(t.replace(/^>\s*/, ''))}</blockquote>;
-              }
-              return <p key={li}>{renderInline(t)}</p>;
-            })}
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function renderInline(text) {
-  // Handle bold **text** and *italic*
-  const parts = [];
-  let remaining = text;
-  let key = 0;
-  while (remaining.length > 0) {
-    const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
-    if (boldMatch) {
-      const idx = remaining.indexOf(boldMatch[0]);
-      if (idx > 0) parts.push(<span key={key++}>{remaining.substring(0, idx)}</span>);
-      parts.push(<strong key={key++}>{boldMatch[1]}</strong>);
-      remaining = remaining.substring(idx + boldMatch[0].length);
-    } else {
-      parts.push(<span key={key++}>{remaining}</span>);
-      break;
-    }
-  }
-  return parts;
+  return content === null || content === undefined ? null : <AIReport response={content} title="Analysis result" />;
 }
 
 // Toast notification
@@ -315,6 +208,7 @@ export default function FeaturePage({ config }) {
               <Sparkles size={20} style={{ color: 'var(--accent-primary)' }} />
               <h3>{config.aiLabel || 'AI Generate'}</h3>
             </div>
+            <FullFieldPresets value={aiFormData} presets={nativeAIPresets(config)} disabled={aiLoading} onChange={(next) => { setAiFormData(next); setAiResult(null); }} />
             {config.aiFields.map((field) => (
               <div className="form-group" key={field.key}>
                 <label className="form-label">
@@ -363,10 +257,10 @@ export default function FeaturePage({ config }) {
             {aiResult && (
               <AIOutputDisplay
                 content={
-                  aiResult.generated_content ||
-                  (config.aiResponseField && aiResult[config.aiResponseField]) ||
-                  aiResult.ai_analysis || aiResult.ai_response || aiResult.analysis ||
-                  aiResult.content || aiResult.message || aiResult.points || aiResult
+                  aiResult.generated_content ??
+                  (config.aiResponseField ? aiResult[config.aiResponseField] : undefined) ??
+                  aiResult.ai_analysis ?? aiResult.ai_response ?? aiResult.analysis ??
+                  aiResult.content ?? aiResult.message ?? aiResult.points ?? aiResult
                 }
               />
             )}
@@ -464,7 +358,8 @@ export default function FeaturePage({ config }) {
                   <div className="detail-field-value">
                     {field.type === 'checkbox' ? (val ? 'Yes' : 'No') :
                      field.type === 'datetime-local' && val ? formatDate(val) :
-                     val || '-'}
+                     val === null || val === undefined ? '-' : typeof val === 'object' ? <AIReport response={val} title={field.label} /> :
+                     config.isAI && typeof val === 'string' && (/^[\s]*[\[{]/.test(val) || field.key === 'ai_analysis') ? <AIReport response={val} title={field.label} /> : val}
                   </div>
                 </div>
               );
@@ -477,10 +372,6 @@ export default function FeaturePage({ config }) {
             )}
           </div>
 
-          {/* AI analysis display for AI-powered features */}
-          {config.isAI && (selectedItem.ai_analysis || selectedItem.content || selectedItem.points) && (
-            <AIOutputDisplay content={selectedItem.ai_analysis || selectedItem.content || selectedItem.points} />
-          )}
         </div>
 
         {/* Delete Confirmation Modal */}
