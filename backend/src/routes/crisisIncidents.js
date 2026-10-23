@@ -23,9 +23,14 @@ router.get('/', async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page) || 1);
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit) || 20));
     const offset = (page - 1) * limit;
+    const fp=[]; const fc=[];
+    if(req.query.search){ fp.push('%'+req.query.search+'%'); const i=fp.length; fc.push('(title ILIKE $'+i+' OR description ILIKE $'+i+')'); }
+    if(req.query.status){ fp.push(req.query.status); fc.push('status=$'+fp.length); }
+    if(req.query.severity){ fp.push(req.query.severity); fc.push('severity=$'+fp.length); }
+    const fw = fc.length ? ' WHERE '+fc.join(' AND ') : '';
     const [data, count] = await Promise.all([
-      pool.query('SELECT * FROM crisis_incidents ORDER BY created_at DESC LIMIT $1 OFFSET $2', [limit, offset]),
-      pool.query('SELECT COUNT(*) FROM crisis_incidents'),
+      pool.query('SELECT * FROM crisis_incidents'+fw+' ORDER BY created_at DESC LIMIT $'+(fp.length+1)+' OFFSET $'+(fp.length+2), [...fp, limit, offset]),
+      pool.query('SELECT COUNT(*) FROM crisis_incidents'+fw, fp),
     ]);
     res.json({ data: data.rows, total: parseInt(count.rows[0].count), page, limit });
   } catch (err) {

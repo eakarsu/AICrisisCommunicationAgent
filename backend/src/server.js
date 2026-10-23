@@ -67,6 +67,8 @@ app.use('/api/export', require('./routes/exportRoutes'));
 
 const PORT = process.env.PORT || 3001;
 
+app.use('/api/feature-pack32a', require('./routes/featurePack32A')({ pool: require('./db/pool'), auth: require('./middleware/auth') }));
+
 // // === Custom Crisis Views (mount BEFORE 404) ===
 app.use('/api/custom-views', require('./routes/customViews'));
 
